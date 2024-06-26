@@ -50,13 +50,13 @@ const server = http.createServer((req, res) => {
       if (body["item"] === '') {
         item = "Nothing was entered.";
       }
-        else if (userGuess > randomNumber) {
+      else if (userGuess > randomNumber) {
         item = `${userGuess} is too high. Try again!`;
       } else if (userGuess < randomNumber) {
         item = `${userGuess} is too low. Try again!`;
       } else if (userGuess === randomNumber) {
         item = `Congratulations! ${userGuess} is correct.`;
-      } 
+      }
 
       // Your code changes would end here
       res.writeHead(303, {
@@ -67,6 +67,10 @@ const server = http.createServer((req, res) => {
   } else {
     res.end(form());
   }
+});
+
+server.on("request", (req) => {
+  console.log("event received: ", req.method, req.url);
 });
 
 server.listen(3000);
