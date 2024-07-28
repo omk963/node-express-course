@@ -21,7 +21,8 @@ const getBody = (req, callback) => {
 };
 
 // here, you could declare one or more variables to store what comes back from the form.
-let item = "Enter something below.";
+let item = "Enter a number below from 1-100.";
+const randomNumber = Math.floor(Math.random() * 100) + 1;
 
 // here, you can change the form below to modify the input fields and what is displayed.
 // This is just ordinary html with string interpolation.
@@ -30,7 +31,7 @@ const form = () => {
   <body>
   <p>${item}</p>
   <form method="POST">
-  <input name="item"></input>
+  <input name="item" type='number' min='1' max='100'></input>
   <button type="submit">Submit</button>
   </form>
   </body>
@@ -44,11 +45,19 @@ const server = http.createServer((req, res) => {
     getBody(req, (body) => {
       console.log("The body of the post is ", body);
       // here, you can add your own logic
-      if (body["item"]) {
-        item = body["item"];
-      } else {
+      const userGuess = Number(body["item"]);
+
+      if (body["item"] === '') {
         item = "Nothing was entered.";
       }
+      else if (userGuess > randomNumber) {
+        item = `${userGuess} is too high. Try again!`;
+      } else if (userGuess < randomNumber) {
+        item = `${userGuess} is too low. Try again!`;
+      } else if (userGuess === randomNumber) {
+        item = `Congratulations! ${userGuess} is correct.`;
+      }
+
       // Your code changes would end here
       res.writeHead(303, {
         Location: "/",
@@ -58,6 +67,10 @@ const server = http.createServer((req, res) => {
   } else {
     res.end(form());
   }
+});
+
+server.on("request", (req) => {
+  console.log("event received: ", req.method, req.url);
 });
 
 server.listen(3000);
